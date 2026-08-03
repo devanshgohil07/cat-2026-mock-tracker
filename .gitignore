@@ -1,0 +1,11 @@
+# Excel lock & temp files
+~$*.xlsx
+*.tmp
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Optional: local backup copies
+*_backup.xlsx
+*_old.xlsx
