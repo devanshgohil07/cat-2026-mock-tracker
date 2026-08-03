@@ -1,4 +1,4 @@
-# 🎯 CAT 2026 — Mock Performance Tracker
+# CAT 2026 — Mock Performance Tracker
 
 A formula-driven Excel / Google-Sheets workbook that turns raw CAT mock results into a self-updating analytics dashboard. Enter each mock once; every metric, chart, target, and breakdown updates itself.
 
