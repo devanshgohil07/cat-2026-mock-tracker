@@ -2,7 +2,7 @@
 
 A formula-driven Excel / Google-Sheets workbook that turns raw CAT mock results into a self-updating analytics dashboard. Enter each mock once; every metric, chart, target, and breakdown updates itself.
 
-![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)
+![License: CC BY 4.0]([https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg](https://creativecommons.org/licenses/by-nc/4.0/legalcode.txt))
 
 ## Highlights
 - **Enter once, derive everywhere** — 15+ metrics per section, all auto-computed
