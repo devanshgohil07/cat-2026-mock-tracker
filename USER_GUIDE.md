@@ -1,4 +1,4 @@
-# CAT 2026 — Mock Performance Tracker
+# CAT 2026 — Mock Performance Tracker · User Guide
 
 A formula-driven analytics workbook for tracking **CAT** mock-test performance. You enter raw results in **one** place; every metric, chart, and breakdown derives itself and updates automatically.
 
@@ -9,7 +9,7 @@ A formula-driven analytics workbook for tracking **CAT** mock-test performance. 
 ## Table of Contents
 
 1. [What this workbook is](#1-what-this-workbook-is)
-2. [Quick start](#2-quick-start--where-to-enter-data)
+2. [Quick start — where to enter data](#2-quick-start--where-to-enter-data)
 3. [Sheet map](#3-sheet-map)
 4. [Mock Database — column by column](#4-mock-database--column-by-column)
 5. [Data validation — what it will refuse](#5-data-validation--what-it-will-refuse)
@@ -18,13 +18,13 @@ A formula-driven analytics workbook for tracking **CAT** mock-test performance. 
 8. [How to evaluate what you see](#8-how-to-evaluate-what-you-see)
 9. [Targets, trends & projections](#9-targets-trends--projections)
 10. [Features at a glance](#10-features-at-a-glance)
-11. [**FAQ** & gotchas](#11-faq--gotchas)
+11. [FAQ & gotchas](#11-faq--gotchas)
 
 ---
 
 ## 1. What this workbook is
 
-A single-source-of-truth tracker. You log raw mock results in the **Mock Database** sheet. Everything else — 15+ metrics per section, 9 charts, provider/series breakdowns, targets, projections, and diagnostics — is computed by formula and refreshes itself as you add mocks.
+A single-source-of-truth tracker. You log raw mock results in the **Mock Database** sheet. Everything else — 15+ metrics per section, 9 charts, provider/series breakdowns, a month-by-month schedule table, targets, projections and diagnostics — is computed by formula and refreshes itself as you add mocks.
 
 Three ideas run through the whole design:
 
@@ -32,7 +32,7 @@ Three ideas run through the whole design:
 |---|---|
 | **Enter once, derive everywhere** | You never type a number that could be calculated. One entry updates the entire workbook. |
 | **Blank-safe** | A blank means **no data**, never zero. A mock with no percentile is *excluded* from percentile stats, not counted as 0. |
-| **Self-sizing** | Charts, tables, and statistics size themselves to however many mocks you've completed — no manual range editing, ever. |
+| **Self-sizing** | Charts, tables and statistics size themselves to however many mocks you've completed — no manual range editing, ever. |
 
 ---
 
@@ -45,6 +45,7 @@ Three ideas run through the whole design:
 | **Log a completed mock** | Find its row → enter **Actual Date**, then section **Scores, Percentiles, Attempts, Correct**. Status flips to *Completed* automatically and all analytics update. |
 | **Plan a future mock** | Enter **Test Name** + **Planned Date** (+ Provider / Series / Mock Type). It counts as *Planned* but stays *Pending* until an Actual Date is entered. |
 | **Change a target** | `Calculations` sheet, cells **B38:B41** (blue-on-yellow = editable). |
+| **Change the GP decay ratio** | `Calculations` cell **B42** (blue-on-yellow). |
 | **Add a dropdown option** | `Lists` sheet — add to the relevant column; dropdowns pick it up automatically. |
 
 > 💡 **Leave blank what you don't have.** Past **CAT** papers have no percentile — leave those cells empty. The workbook handles the gap gracefully.
@@ -55,11 +56,11 @@ Three ideas run through the whole design:
 
 | Sheet | Purpose | Editable? |
 |---|---|---|
-| **Dashboard** | Headline view: KPI cards, 4 section panels, insight strips, 9 charts, Mock Index (cols R:AB) | 🔒 Locked |
+| **Dashboard** | KPI cards, 4 section panels, insight strips, Planned-by-Month table (R8:V19), 9 charts, Mock Index (R25 down) | 🔒 Locked |
 | **Mock Database** | **THE DATA** — your raw entry sheet, 150 pre-created rows (3–152) | ✏️ Inputs only |
 | **Section Analysis** | Deep per-section metrics + Section Summary + Attempt Efficiency table | 🔒 Locked |
-| **Provider Analysis** | Performance split by Provider, Series, and Mock Type | 🔒 Locked |
-| **Calculations** | The engine — all metrics, targets, trends, projections | 🔒 Locked except targets B38:B41 |
+| **Provider Analysis** | Performance split by Provider, Series and Mock Type | 🔒 Locked |
+| **Calculations** | The engine — all metrics, targets, trends, projections | 🔒 Locked except **B38:B42** |
 | **Chart_Data** | Internal chart plumbing — **never edit** | 🔒 Locked |
 | **Lists** | Dropdown source lists | ✏️ Editable |
 
@@ -67,7 +68,7 @@ Three ideas run through the whole design:
 
 ## 4. Mock Database — column by column
 
-Header row is **row 2**; data rows are **3–**152****. Input columns are unlocked; every calculated column is locked so you can't overwrite a formula by accident.
+Header row is **row 2**; data rows are **3–152**. Input columns are unlocked; every calculated column is locked so you can't overwrite a formula by accident.
 
 | Col | Field | Source | Notes |
 |---|---|---|---|
@@ -76,7 +77,7 @@ Header row is **row 2**; data rows are **3–**152****. Input columns are unlock
 | C | **Attempt Order** | *Auto* | Rank by Actual Date among completed mocks — 1, 2, 3… no gaps. **The join key the whole engine runs on**, and the number on every chart's x-axis. |
 | D | Test Name | **You** | e.g. *SimCAT 9*. |
 | E / F / G | Provider / Series / Mock Type | **You** | Dropdowns sourced from `Lists`. |
-| H | Planned Date | **You** | A row is *Planned* once it has a Test Name + Planned Date. |
+| H | Planned Date | **You** | A row is *Planned* once it has a Test Name **and** a Planned Date. |
 | I | **Actual Date** | **You** | **The switch** — entering it flips Status to *Completed* and pulls the mock into every stat and chart. |
 | J | Status | *Auto* | `Completed` if Actual Date filled, else `Pending`. |
 | K | Analysis Done | **You** | Yes/No. Drives the Analysis Rate KPI. |
@@ -99,18 +100,28 @@ Header row is **row 2**; data rows are **3–**152****. Input columns are unlock
 | **Correct** | Whole number ≥ 0, **and never more than that section's Attempts** |
 | Provider / Series / Mock Type / Analysis | Must come from the dropdown |
 
-> The Correct ≤ Attempts guard blocks the silent error that used to produce negative *Incorrect* and >**100**% accuracy.
+> The Correct ≤ Attempts guard blocks the silent error that used to produce negative *Incorrect* and >100% accuracy.
+
+**Series options:** SimCAT · Take Home · Previous CAT · DashCAT · Headstart CAT · **Others**.
+*Others* is a genuine catch-all — on `Provider Analysis` it counts every completed mock whose Series isn't one of the five named ones, so free tests, publisher mocks and one-offs are all captured without adding list entries.
 
 ---
 
 ## 6. Reading the Dashboard
 
-- ****KPI** cards (top):** Days to **CAT** · Completed/Planned · Completion Rate · Analysed · Last Attempted.
-- **Four section panels** (Overall, **VARC**, **DILR**, QA), each showing: Latest, Average, Median, Highest, Lowest, Std Dev, Roll Avg 5, Roll Avg 10, Improvement, **Trend/mock**, Consistency — as **Score** and **%ile** columns, with ▲/▼ direction arrows.
-- **Insight strips:** auto-generated — strongest/weakest/most-improved section, projected next score, trend, and target readiness.
-- **Mock Index (cols R:AB):** a live legend mapping each chart's attempt-number back to a named mock, with every graphed metric. Grows automatically.
+- **KPI cards (top):** Days to CAT · Completed/Planned · Completion Rate · Analysed · Last Attempted.
+- **Four section panels** (Overall, VARC, DILR, QA), each showing: Latest, Average, Median, Highest, Lowest, Std Dev, Roll Avg 5, Roll Avg 10, Improvement, Trend/mock, Consistency — as **Score** and **%ile** columns, with ▲/▼ direction arrows.
+- **Planned Mocks by Month (R8:V19):** Planned / Done / Pending / % Done per calendar month, with a Total row. Month rows generate themselves from your earliest to latest planned date and stop automatically — nothing to maintain. A mock counts as *planned* only when it has **both** a Test Name and a Planned Date.
+- **Insight strips (row 19):** auto-generated — strongest/weakest/most-improved section on the left; projected next score, trend, target readiness and the **GP weighted average** on the right.
+- **Mock Index (R25 down):** a live legend mapping each chart's attempt number back to a named mock, with every graphed metric. Grows automatically.
 
-The **Latest** row shows the single most recent mock. If that mock has a blank metric (e.g. a Past-**CAT** paper's percentile), the Latest cell is **blank** — it never shows a stale older value.
+The **Latest** row shows the single most recent mock. If that mock has a blank metric (e.g. a Past-CAT paper's percentile), the Latest cell is **blank** — it never shows a stale older value.
+
+### Rolling averages and blanks
+
+**Roll Avg 5** means *the last 5 mocks, skipping any that lack the metric*. If two of your last five have no percentile, the percentile Roll-5 averages the three that do. It does **not** reach further back to find five percentile values — the window is always your five most recent attempts, so score and percentile stay directly comparable.
+
+The `n` figure on `Section Analysis` shows how many completed mocks exist; percentile statistics may be based on fewer, because Past-CAT papers carry no percentile.
 
 ---
 
@@ -128,6 +139,8 @@ The **Latest** row shows the single most recent mock. If that mock has a blank m
 
 All trend charts are **XY-scatter** so the x-axis is attempt number and auto-extends as you log mocks. Missing percentiles show as **line breaks**, not zero-drops.
 
+> ⚠️ Charts 2 and 4 have a **fixed y-axis floor** (75 and 20) for readability. A mock below that floor is drawn off the bottom of the plot rather than as a visible dip. If a chart looks like it's missing a point, check the Mock Index.
+
 ---
 
 ## 8. How to evaluate what you see
@@ -135,17 +148,26 @@ All trend charts are **XY-scatter** so the x-axis is attempt number and auto-ext
 | Signal | How to read it |
 |---|---|
 | **Trend / mock** | Positive = improving. The size is points gained per mock. A flat trend on a high percentile = plateau. |
+| **GP Weighted Avg** | Geometric decay across your *whole* history — the latest mock weighs `r⁰`, the previous `r¹`, and so on. No cliff edge: old mocks fade rather than dropping out. Compare against the plain Average to see whether weighted-recent form is ahead or behind lifetime. |
 | **Consistency Index** | 100 × (1 − StdDev/Avg). Higher = steadier. Low consistency with a high average = volatile; stabilise before CAT. |
 | **Roll Avg 5 vs Average** | Recent form vs lifetime. Roll-5 above lifetime = you're on an upswing. |
 | **Radar gap (Avg vs Best)** | Big gap on a section = untapped headroom; you've hit that level before and can again. |
-| **Attempt Efficiency (marks/attempt)** | Low value + many attempts + many wrong = over-attempting into negative marking. |
+| **Attempt Efficiency (marks/attempt)** | See the box below — read it *with* attempt count, never alone. |
 | **Colour bands** | 7-tier: personal-best → excellent (≥+1 SD) → above median → typical → below median → poor (≤−1 SD) → worst. Recomputes live. |
+| **Pace Needed vs Avg Days Between** | `Calculations` B31 vs B17. If Pace Needed is well below your actual gap, the remaining schedule doesn't fit — rebalance early, not in the final month. |
+
+> ### Reading Attempt Efficiency correctly
+> CAT marks **+3 correct, −1 incorrect**, so the break-even accuracy for attempting a
+> question is **25%**. Above that, an extra attempt has positive expected value.
+> A high *marks/attempt* figure alongside a **low attempt count** therefore signals
+> **unused headroom**, not efficiency — you're leaving profitable questions on the
+> table. Expected value of one more attempt ≈ `3 × accuracy − 1 × (1 − accuracy)`.
 
 ---
 
 ## 9. Targets, trends & projections
 
-Set on `Calculations` ****B38**:**B41**** (blue-on-yellow inputs):
+Set on `Calculations` **B38:B41** (blue-on-yellow inputs):
 
 | Target | Default |
 |---|---|
@@ -156,18 +178,29 @@ Set on `Calculations` ****B38**:**B41**** (blue-on-yellow inputs):
 
 For each, the workbook shows **Recent (5-mock avg)**, **Gap to target**, a **Status verdict** (✓ On target / Closing +X/mock / Behind), and **Mocks @ trend** (how many more mocks at your current rate to hit the target). A *not closing* verdict means that section's trend is flat — more volume alone won't get you there.
 
+**GP decay ratio** lives at **B42**. Lower = more responsive to recent form; higher = smoother and closer to a lifetime average. Useful reference points:
+
+| r | Half-life | Effective window |
+|---|---|---|
+| 0.80 | 3.1 mocks | ~4 |
+| 0.87 | 5.0 mocks | ~7 |
+| 0.90 | 6.6 mocks | ~9 |
+| 0.945 | 12.3 mocks | ~17 |
+
 ---
 
 ## 10. Features at a glance
 
 - ✅ Single-entry data model — type once, derive everywhere
 - ✅ Blank-safe statistics (no false zeros)
-- ✅ Self-sizing charts, tables, and metrics
+- ✅ Self-sizing charts, tables and metrics
 - ✅ 7-band dynamic conditional formatting (mean/median/SD based)
-- ✅ Trend, projection, and coefficient-of-variation metrics
+- ✅ Trend, projection and coefficient-of-variation metrics
+- ✅ GP (exponentially) weighted average with a live decay input
+- ✅ Planned-mocks-by-month schedule table
 - ✅ Target tracking with pacing and mocks-to-target reality check
 - ✅ Attempt-efficiency diagnostics (marks per attempt, negatives)
-- ✅ Provider / Series / Mock-Type breakdowns
+- ✅ Provider / Series / Mock-Type breakdowns with a catch-all Others bucket
 - ✅ Sectional-balance radar
 - ✅ Live Mock Index tying chart points to named mocks
 - ✅ Full input validation + locked formulas
@@ -177,12 +210,16 @@ For each, the workbook shows **Recent (5-mock avg)**, **Gap to target**, a **Sta
 
 ## 11. FAQ & gotchas
 
-**Why does the x-axis show numbers, not mock names?** The charts use a value (scatter) axis so they can auto-grow forever. The **Mock Index (R:AB)** maps each number to its named mock.
+**Why does the x-axis show numbers, not mock names?** The charts use a value (scatter) axis so they can auto-grow forever. The **Mock Index (R25 down)** maps each number to its named mock.
 
-**A percentile cell is blank — is that a bug?** No. Past-**CAT** papers have no percentile; leave it blank and the workbook excludes it correctly.
+**A percentile cell is blank — is that a bug?** No. Past-CAT papers have no percentile; leave it blank and the workbook excludes it correctly.
+
+**Why is my percentile `n` lower than my mock count?** Because percentile statistics only use mocks that have a percentile. That's intentional — see §6.
+
+**A chart looks like it's missing a point.** If the value is below Chart 2's floor (75) or Chart 4's floor (20) it's drawn off-plot. Check the Mock Index for the actual number.
 
 **I added a mock but a chart didn't move.** It will after a recalc. If not, press `Ctrl+Alt+F9` to force a full recalc.
 
-**The workbook won't let me type in a cell.** That cell is a locked formula. Only Mock Database inputs, Calculations **B38**:**B41**, and Lists are editable. To unlock everything: *Review → Unprotect Sheet* (no password).
+**The workbook won't let me type in a cell.** That cell is a locked formula. Only Mock Database inputs, Calculations **B38:B42**, and Lists are editable. To unlock everything: *Review → Unprotect Sheet* (no password).
 
-**Requirements:** the auto-growing charts and spill-based tables need **Excel **365** / **2021**+** or **Google Sheets** (both support the `**FILTER**` function). Older Excel will show the data but not auto-expand.
+**Requirements:** the auto-growing charts and spill-based tables need **Excel 365 / 2021+** or **Google Sheets** (both support the `FILTER` function). Older Excel will show the data but not auto-expand.
