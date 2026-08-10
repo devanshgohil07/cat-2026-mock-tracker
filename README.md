@@ -65,8 +65,8 @@ paired with a low attempt count means unused headroom, not efficiency.
 
 ## Documentation
 
-📘 Full user guide: [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md)
-🔧 Technical spec & build history: [`docs/TECH_SPEC.md`](docs/TECH_SPEC.md)
+📘 Full user guide: [`main/USER_GUIDE.md`](main/USER_GUIDE.md)
+🔧 Technical spec & build history: [`main/TECH_SPEC.md`](main/TECH_SPEC.md)
 
 ## License
 
